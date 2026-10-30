@@ -2,7 +2,8 @@
 from app.services.acceso_service import AccesoService, ResultadoValidacion
 from app.services.auth_service import AuthService
 from app.services.entrenador_service import EntrenadorService
+from app.services.membresia_service import MembresiaService
 from app.services.reporte_service import ReporteService
 from app.services.socio_service import SocioService
 
-__all__ = ["AccesoService", "ResultadoValidacion", "AuthService", "EntrenadorService", "ReporteService", "SocioService"]
+__all__ = ["AccesoService", "ResultadoValidacion", "AuthService", "EntrenadorService", "MembresiaService", "ReporteService", "SocioService"]
