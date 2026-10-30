@@ -13,7 +13,7 @@ body { background: var(--gc-fondo); }
 .text-primario { color: var(--gc-primario); }
 
 /* Barra lateral */
-.sidebar { width: 240px; min-height: 100vh; background: #102a2a; }
+.sidebar { width: 240px; flex-shrink: 0; min-height: 100vh; background: #102a2a; }
 .sidebar .marca { color: #fff; font-weight: 700; font-size: 1.15rem; letter-spacing: .3px; }
 .sidebar .nav-link { color: #b6c9c7; border-radius: .5rem; padding: .55rem .8rem; }
 .sidebar .nav-link:hover { color: #fff; background: rgba(255,255,255,.06); }

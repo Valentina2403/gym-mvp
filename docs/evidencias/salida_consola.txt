@@ -1,0 +1,162 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.18, pytest-9.1.1, pluggy-1.6.0 -- /usr/local/bin/python3
+metadata: {'Python': '3.13.18', 'Platform': 'Linux-6.18.44-fc-v185-x86_64-with-glibc2.39', 'Packages': {'pytest': '9.1.1', 'pluggy': '1.6.0'}, 'Plugins': {'platformdirs': '4.13.0', 'anyio': '4.15.1', 'metadata': '3.1.1', 'html': '4.2.0', 'cov': '7.1.0'}, 'JAVA_HOME': '/usr/lib/jvm/java-21-openjdk-amd64'}
+rootdir: gym-mvp
+configfile: pytest.ini
+testpaths: tests
+plugins: platformdirs-4.13.0, anyio-4.15.1, metadata-3.1.1, html-4.2.0, cov-7.1.0
+collecting ... collected 45 items
+
+tests/integration/test_flujos.py::test_PI01_login_por_rol_redirige_al_panel[admin@test.com-Admin123*-/] PASSED
+tests/integration/test_flujos.py::test_PI01_login_por_rol_redirige_al_panel[recepcion@test.com-Recep123*-/] PASSED
+tests/integration/test_flujos.py::test_PI01_login_por_rol_redirige_al_panel[entrenador@test.com-Entrena123*-/] PASSED
+tests/integration/test_flujos.py::test_PI01_login_por_rol_redirige_al_panel[activo@test.com-1000000001-/] PASSED
+tests/integration/test_flujos.py::test_PI01b_credenciales_invalidas_no_revelan_el_dato PASSED
+tests/integration/test_flujos.py::test_PI01c_rutas_no_permitidas_devuelven_403 PASSED
+tests/integration/test_flujos.py::test_PI02_registro_de_socio_y_documento_duplicado PASSED
+tests/integration/test_flujos.py::test_PI03_acceso_permitido_con_membresia_vigente PASSED
+tests/integration/test_flujos.py::test_PI04_acceso_denegado_con_membresia_vencida PASSED
+tests/integration/test_flujos.py::test_PI04b_documento_no_registrado PASSED
+tests/integration/test_flujos.py::test_PI05_renovacion_suma_30_dias_y_guarda_pago PASSED
+tests/integration/test_flujos.py::test_PI05b_error_al_guardar_hace_rollback PASSED
+tests/integration/test_flujos.py::test_PI06_medicion_calcula_imc_y_aparece_en_mi_progreso PASSED
+tests/integration/test_flujos.py::test_PI06b_medicion_con_datos_invalidos PASSED
+tests/integration/test_flujos.py::test_PI07_reporte_de_morosos_lista_solo_vencidos PASSED
+tests/integration/test_flujos.py::test_PI08_validacion_de_acceso_menor_a_2_segundos 
+RNF-01 · 100 validaciones con 1.003 socios: p95 = 22.0 ms, máx = 62.8 ms
+PASSED
+tests/integration/test_flujos.py::test_PI09_socio_sin_mediciones_ve_mensaje_amigable PASSED
+tests/integration/test_flujos.py::test_PI10_registro_de_entrenador_con_especialidades PASSED
+tests/integration/test_flujos.py::test_PI11_admin_restablece_contrasena_de_socio PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU01_membresia_vigente_antes_del_vencimiento PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU02_membresia_vigente_el_dia_exacto_del_vencimiento PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU03_membresia_no_vigente_despues_del_vencimiento PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU03b_membresia_renovada_o_cancelada_nunca_esta_vigente PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU04_plan_mensual_suma_30_dias PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU05_transiciones_de_estado[8-ACTIVA] PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU05_transiciones_de_estado[7-POR_VENCER] PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU05_transiciones_de_estado[0-POR_VENCER] PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU05_transiciones_de_estado[-1-VENCIDA] PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU05b_solo_se_cancela_una_membresia_activa PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU06_calculo_imc_ejemplo_de_la_historia PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU07_imc_rechaza_valores_invalidos[75-0] PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU07_imc_rechaza_valores_invalidos[-70-1.7] PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU07_imc_rechaza_valores_invalidos[0-1.7] PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU08_clasificacion_imc_en_valores_limite[18.49-Bajo peso] PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU08_clasificacion_imc_en_valores_limite[18.5-Normal] PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU08_clasificacion_imc_en_valores_limite[24.99-Normal] PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU08_clasificacion_imc_en_valores_limite[25.0-Sobrepeso] PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU08_clasificacion_imc_en_valores_limite[29.99-Sobrepeso] PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU08_clasificacion_imc_en_valores_limite[30-Obesidad] PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU09_registro_con_documento_duplicado_no_guarda PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU10_campos_obligatorios_vacios PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU11_contrasena_se_guarda_cifrada_con_bcrypt PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU12_acceso_denegado_con_membresia_vencida PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU13_reporte_sin_morosos_devuelve_lista_vacia PASSED
+tests/unit/test_dominio_y_servicios.py::test_PU14_renovar_marca_anterior_como_renovada PASSED
+
+=============================== warnings summary ===============================
+tests/unit/test_dominio_y_servicios.py::test_PU12_acceso_denegado_con_membresia_vencida
+  /usr/local/lib/python3.13/site-packages/sqlalchemy/engine/result.py:293: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb90931b100>
+    for index, name in enumerate(self._keys)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/unit/test_dominio_y_servicios.py::test_PU12_acceso_denegado_con_membresia_vencida
+  /usr/local/lib/python3.13/site-packages/sqlalchemy/engine/result.py:293: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb90931ac50>
+    for index, name in enumerate(self._keys)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/unit/test_dominio_y_servicios.py::test_PU12_acceso_denegado_con_membresia_vencida
+  gym-mvp/app/services/acceso_service.py:54: SAWarning: Object of type <RegistroAcceso> not in session, add operation along 'Socio.registros_acceso' will not proceed
+    db.session.commit()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: gym-mvp/docs/evidencias/resultados_junit.xml -
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.18-final-0 _______________
+
+Name                                 Stmts   Miss  Cover
+--------------------------------------------------------
+app/__init__.py                         56     13    77%
+app/config.py                           20      0   100%
+app/controllers/__init__.py              0      0   100%
+app/controllers/acceso.py               14      0   100%
+app/controllers/auth.py                 43     17    60%
+app/controllers/decoradores.py          16      0   100%
+app/controllers/entrenadores.py         29      7    76%
+app/controllers/main.py                 16      7    56%
+app/controllers/membresias.py           36     11    69%
+app/controllers/metricas.py             25      2    92%
+app/controllers/progreso.py             14      0   100%
+app/controllers/reportes.py             28      0   100%
+app/controllers/socios.py               48      2    96%
+app/extensions.py                        9      0   100%
+app/models/__init__.py                   5      0   100%
+app/models/enums.py                     19      0   100%
+app/models/membresias.py                70      3    96%
+app/models/operacion.py                 39      0   100%
+app/models/personas.py                  74      4    95%
+app/repositories.py                     84      5    94%
+app/seed.py                             41     41     0%
+app/services/__init__.py                 8      0   100%
+app/services/acceso_service.py          42      0   100%
+app/services/auth_service.py            17      1    94%
+app/services/entrenador_service.py      32      4    88%
+app/services/errores.py                 16      1    94%
+app/services/membresia_service.py       55     18    67%
+app/services/metrica_service.py         43      4    91%
+app/services/reporte_service.py         26      6    77%
+app/services/socio_service.py           24      3    88%
+app/services/validaciones.py            24      3    88%
+--------------------------------------------------------
+TOTAL                                  973    152    84%
+Coverage HTML written to dir docs/evidencias/cobertura
+- Generated html report: file://gym-mvp/docs/evidencias/reporte_pruebas.html -
+======================== 45 passed, 3 warnings in 5.54s ========================
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb909517010>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb909223b50>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb90982fe20>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb909319990>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb909318b80>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb909223e20>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb9096135b0>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb90931be20>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb909319d50>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb9092815d0>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb90931ab60>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb909318220>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb90913b970>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb908fda890>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/local/lib/python3.13/site-packages/_pytest/unraisableexception.py:33: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fb9093185e0>
+  gc.collect()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback

@@ -15,4 +15,6 @@ def mi_progreso():
     socio = current_user.persona
     historial = MetricaService.historial(socio.id_persona)
     membresia = socio.membresia_vigente()
-    return render_template("progreso/mi_progreso.html", socio=socio, historial=historial, membresia=membresia)
+    etiquetas = [m.fecha.strftime("%d/%m") for m in historial]
+    return render_template("progreso/mi_progreso.html", socio=socio, historial=historial, membresia=membresia,
+                           etiquetas=etiquetas)
