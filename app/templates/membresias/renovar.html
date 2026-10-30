@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% from "_macros.html" import estado with context %}
+{% block titulo %}Renovar membresía{% endblock %}
+{% block contenido %}
+<a href="{{ url_for('socios.detalle', id_socio=socio.id_persona) }}" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> {{ socio.nombre_completo() }}</a>
+<h1 class="h4 mt-2 mb-4">Asignar / renovar membresía</h1>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="tarjeta p-4">
+      <form method="post" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="form-label">Plan</label>
+        <div class="row g-2 mb-3">
+          {% for p in planes %}
+          <div class="col-sm-4">
+            <input type="radio" class="btn-check" name="id_plan" id="plan{{ p.id_plan }}" value="{{ p.id_plan }}"
+                   data-precio="{{ p.precio|int }}" {{ 'checked' if datos.get('id_plan') == p.id_plan|string }}>
+            <label class="btn btn-outline-primary w-100 py-3" for="plan{{ p.id_plan }}">
+              <div class="fw-semibold">{{ p.nombre }}</div><div class="small">{{ p.duracion_dias }} días · {{ p.precio|dinero }}</div>
+            </label>
+          </div>
+          {% endfor %}
+        </div>
+        {% if errores.get('plan') %}<div class="text-danger small mb-3">{{ errores.plan }}</div>{% endif %}
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="monto">Monto recibido</label>
+            <input class="form-control {{ 'is-invalid' if errores.get('monto') }}" id="monto" name="monto" inputmode="numeric" value="{{ datos.get('monto', '') }}">
+            {% if errores.get('monto') %}<div class="invalid-feedback">{{ errores.monto }}</div>{% endif %}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="metodo">Método de pago</label>
+            <select class="form-select {{ 'is-invalid' if errores.get('metodo') }}" id="metodo" name="metodo">
+              <option value="">Selecciona…</option>
+              {% for m in metodos %}<option value="{{ m.value }}" {{ 'selected' if datos.get('metodo') == m.value }}>{{ m.value.capitalize() }}</option>{% endfor %}
+            </select>
+            {% if errores.get('metodo') %}<div class="invalid-feedback">{{ errores.metodo }}</div>{% endif %}
+          </div>
+        </div>
+        <p class="text-muted small">La nueva membresía empieza hoy ({{ hoy|fecha }}). La anterior queda marcada como renovada.</p>
+        <button class="btn btn-primary" type="submit"><i class="bi bi-check2-circle me-2"></i>Confirmar renovación</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="tarjeta p-4">
+      <h2 class="h6">Membresía actual</h2>
+      {% if actual %}
+        <p class="mb-1">{{ estado(actual) }} · {{ actual.plan.nombre }}</p>
+        <p class="text-muted mb-0">Vence el {{ actual.fecha_fin|fecha }}</p>
+      {% else %}<p class="text-muted mb-0">Sin membresía.</p>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  document.querySelectorAll('input[name="id_plan"]').forEach(function (radio) {
+    radio.addEventListener('change', function () {
+      var monto = document.getElementById('monto');
+      if (!monto.value) { monto.value = radio.dataset.precio; }
+    });
+  });
+</script>
+{% endblock %}
