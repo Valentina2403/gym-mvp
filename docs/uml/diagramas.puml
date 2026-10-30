@@ -591,3 +591,36 @@ S -down- MR : "1.1.1.2: findVigenteBySocio(id) ↓"
 S -down- M : "1.1.1.3: estaVigente(hoy) ↓"
 S -down- AR : "1.1.1.4: [vigente] save(registro) ↓"
 @enduml
+@startuml arquitectura_flask
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam nodesep 40
+skinparam ranksep 45
+title Arquitectura de alto nivel · aplicación web en capas (MVC) · implementación v1.0.0
+top to bottom direction
+
+node "Cliente: PC o tableta de recepción, celular del socio" as CLI {
+  component "Navegador web (interfaz responsiva)" as BR
+}
+
+node "Servidor de aplicación (Python 3 + Flask 3)" as APP {
+  rectangle "Seguridad · Flask-Login + Flask-WTF\nsesión · permisos por rol · CSRF · contraseñas con bcrypt" as SEC
+  rectangle "Controlador (C) · Blueprints de Flask\nauth · socios · acceso · membresías · métricas · entrenadores · reportes · progreso" as CTL
+  rectangle "Vista (V) · Jinja2 + Bootstrap 5 (local)\npantallas HTML responsivas" as VIS
+  rectangle "Servicios (M) · reglas de negocio\nvigencia · renovación · cálculo de IMC · reportes" as SRV
+  rectangle "Persistencia (M) · SQLAlchemy 2\nmodelos de dominio y repositorios" as REP
+}
+
+database "SQLite (desarrollo) / MySQL 8 (producción)" as DB
+
+BR -down-> SEC : 1. petición HTTP(S)
+SEC -down-> CTL : 2. usuario autorizado
+CTL -down-> SRV : 3. ejecuta el caso de uso
+SRV -down-> REP : 4. lee / guarda
+REP -down-> DB : 5. SQL
+CTL -right-> VIS : 6. datos para la pantalla
+VIS -up-> BR : 7. HTML de respuesta
+@enduml
+
