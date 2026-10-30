@@ -2,6 +2,14 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y versionado semántico.
 
+## [0.3.0] — Sprint 3
+### Agregado
+- Validación de acceso en recepción con alertas verde, ámbar y roja (HU-02, RF-03).
+- Asignación y renovación de membresías con registro de pago manual (HU-04, RF-02).
+- Registro de métricas físicas y cálculo automático del IMC (HU-03, RF-04).
+- Historial de progreso del socio con gráfica de peso (HU-06, RF-08).
+- Cancelación de membresías y comando diario `actualizar-estados`.
+
 ## [0.2.0] — Sprint 2
 ### Agregado
 - Inicio de sesión con roles y contraseñas cifradas con bcrypt (RF-06, RNF-03).
