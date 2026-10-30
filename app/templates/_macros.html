@@ -1,0 +1,25 @@
+{% macro campo(nombre, etiqueta, datos, errores, tipo='text', ayuda=None, atributos='') %}
+<div class="mb-3">
+  <label for="{{ nombre }}" class="form-label">{{ etiqueta }}</label>
+  <input type="{{ tipo }}" id="{{ nombre }}" name="{{ nombre }}" value="{{ datos.get(nombre, '') }}"
+         class="form-control {{ 'is-invalid' if errores.get(nombre) }}" {{ atributos|safe }}>
+  {% if errores.get(nombre) %}<div class="invalid-feedback">{{ errores[nombre] }}</div>
+  {% elif ayuda %}<div class="form-text">{{ ayuda }}</div>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro estado(membresia, hoy=None) %}
+{% if not membresia %}
+  <span class="badge text-bg-secondary">Sin membresía</span>
+{% elif membresia.estado == EstadoMembresia.ACTIVA %}
+  <span class="badge text-bg-success">Activa</span>
+{% elif membresia.estado == EstadoMembresia.POR_VENCER %}
+  <span class="badge text-bg-warning">Por vencer</span>
+{% elif membresia.estado == EstadoMembresia.VENCIDA %}
+  <span class="badge text-bg-danger">Vencida</span>
+{% elif membresia.estado == EstadoMembresia.CANCELADA %}
+  <span class="badge text-bg-dark">Cancelada</span>
+{% else %}
+  <span class="badge text-bg-light">{{ membresia.estado.value.capitalize() }}</span>
+{% endif %}
+{% endmacro %}
