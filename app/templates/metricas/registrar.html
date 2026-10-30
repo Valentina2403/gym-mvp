@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titulo %}Control físico{% endblock %}
+{% block contenido %}
+<a href="{{ url_for('socios.detalle', id_socio=socio.id_persona) }}" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> {{ socio.nombre_completo() }}</a>
+<h1 class="h4 mt-2 mb-4">Control físico · {{ socio.nombre_completo() }}</h1>
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="tarjeta p-4">
+      <h2 class="h6 mb-3">Nueva medición</h2>
+      <form method="post" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {% for nombre, etiqueta, ayuda in [('peso', 'Peso (kg)', 'Ejemplo: 75'), ('altura', 'Altura (m)', 'En metros, ejemplo: 1.75'), ('grasa', '% de grasa (opcional)', '')] %}
+        <div class="mb-3">
+          <label class="form-label" for="{{ nombre }}">{{ etiqueta }}</label>
+          <input class="form-control {{ 'is-invalid' if errores.get(nombre) }}" id="{{ nombre }}" name="{{ nombre }}" inputmode="decimal" value="{{ datos.get(nombre, '') }}">
+          {% if errores.get(nombre) %}<div class="invalid-feedback">{{ errores[nombre] }}</div>{% elif ayuda %}<div class="form-text">{{ ayuda }}</div>{% endif %}
+        </div>
+        {% endfor %}
+        <button class="btn btn-primary" type="submit"><i class="bi bi-calculator me-2"></i>Guardar y calcular IMC</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="tarjeta p-4">
+      <h2 class="h6 mb-3">Historial de mediciones</h2>
+      {% include "metricas/_historial.html" %}
+    </div>
+  </div>
+</div>
+{% endblock %}
