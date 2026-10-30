@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_macros.html" import campo with context %}
+{% block titulo %}Registrar entrenador{% endblock %}
+{% block contenido %}
+<h1 class="h4 mb-4">Registrar entrenador</h1>
+<div class="tarjeta p-4" style="max-width: 720px">
+  <form method="post" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="row">
+      <div class="col-md-6">{{ campo('nombres', 'Nombres', datos, errores) }}</div>
+      <div class="col-md-6">{{ campo('apellidos', 'Apellidos', datos, errores) }}</div>
+      <div class="col-md-6">{{ campo('documento', 'Documento', datos, errores, atributos='inputmode=numeric') }}</div>
+      <div class="col-md-6">{{ campo('telefono', 'Teléfono', datos, errores, tipo='tel') }}</div>
+      <div class="col-12">{{ campo('correo', 'Correo', datos, errores, tipo='email') }}</div>
+    </div>
+    <label class="form-label">Especialidades</label>
+    <div class="d-flex flex-wrap gap-2 mb-1">
+      {% for esp in especialidades %}
+      <input type="checkbox" class="btn-check" name="especialidades" id="esp{{ esp.id_especialidad }}" value="{{ esp.id_especialidad }}"
+             {{ 'checked' if esp.id_especialidad in seleccionadas }}>
+      <label class="btn btn-outline-primary" for="esp{{ esp.id_especialidad }}">{{ esp.nombre }}</label>
+      {% endfor %}
+    </div>
+    {% if errores.get('especialidades') %}<div class="text-danger small">{{ errores.especialidades }}</div>{% endif %}
+    <div class="d-flex gap-2 mt-4">
+      <button class="btn btn-primary" type="submit"><i class="bi bi-save me-2"></i>Guardar</button>
+      <a class="btn btn-outline-secondary" href="{{ url_for('entrenadores.listar') }}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
