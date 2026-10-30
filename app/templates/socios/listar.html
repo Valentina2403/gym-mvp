@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "_macros.html" import estado with context %}
+{% block titulo %}Socios{% endblock %}
+{% block contenido %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+  <h1 class="h4 mb-0">Socios</h1>
+  {% if current_user.tiene_rol(Rol.RECEPCIONISTA) %}
+  <a href="{{ url_for('socios.nuevo') }}" class="btn btn-primary"><i class="bi bi-person-plus me-2"></i>Registrar socio</a>
+  {% endif %}
+</div>
+<form class="mb-3" method="get">
+  <div class="input-group" style="max-width: 420px">
+    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+    <input class="form-control" name="q" value="{{ q }}" placeholder="Buscar por nombre o documento">
+  </div>
+</form>
+<div class="tarjeta">
+  <div class="table-responsive">
+  <table class="table table-hover align-middle mb-0">
+    <thead><tr><th>Nombre</th><th>Documento</th><th class="d-none d-md-table-cell">Teléfono</th><th>Membresía</th><th class="d-none d-md-table-cell">Vence</th><th></th></tr></thead>
+    <tbody>
+    {% for s in socios %}
+      {% set m = s.membresia_vigente() %}
+      {% if m %}{% set _ = m.actualizar_estado(hoy) %}{% endif %}
+      <tr>
+        <td>{{ s.nombre_completo() }}</td>
+        <td>{{ s.documento }}</td>
+        <td class="d-none d-md-table-cell">{{ s.telefono }}</td>
+        <td>{{ estado(m) }}</td>
+        <td class="d-none d-md-table-cell">{{ m.fecha_fin|fecha if m else '—' }}</td>
+        <td class="text-end"><a class="btn btn-sm btn-outline-secondary" href="{{ url_for('socios.detalle', id_socio=s.id_persona) }}">Ver</a></td>
+      </tr>
+    {% else %}
+      <tr><td colspan="6" class="text-center text-muted py-4">No se encontraron socios.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endblock %}

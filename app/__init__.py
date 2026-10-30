@@ -18,6 +18,9 @@ def create_app(config_name: str | None = None) -> Flask:
     login_manager.init_app(app)
     csrf.init_app(app)
 
+    from app.controllers import auth, entrenadores, main, socios
+    for modulo in (auth, main, socios, entrenadores):
+        app.register_blueprint(modulo.bp)
 
     from app.models import Cuenta, EstadoMembresia, Rol
 

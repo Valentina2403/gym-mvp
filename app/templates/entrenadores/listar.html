@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block titulo %}Entrenadores{% endblock %}
+{% block contenido %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+  <h1 class="h4 mb-0">Entrenadores</h1>
+  <a href="{{ url_for('entrenadores.nuevo') }}" class="btn btn-primary"><i class="bi bi-person-plus me-2"></i>Registrar entrenador</a>
+</div>
+<div class="tarjeta">
+  <div class="table-responsive">
+  <table class="table align-middle mb-0">
+    <thead><tr><th>Nombre</th><th>Documento</th><th class="d-none d-md-table-cell">Contacto</th><th>Especialidades</th><th>Estado</th></tr></thead>
+    <tbody>
+    {% for e in entrenadores %}
+      <tr><td>{{ e.nombre_completo() }}</td><td>{{ e.documento }}</td>
+          <td class="d-none d-md-table-cell">{{ e.telefono }}<br><span class="text-muted small">{{ e.correo }}</span></td>
+          <td>{% for esp in e.especialidades %}<span class="badge rounded-pill text-bg-light border me-1">{{ esp.nombre }}</span>{% endfor %}</td>
+          <td>{% if e.activo %}<span class="badge text-bg-success">Activo</span>{% else %}<span class="badge text-bg-secondary">Inactivo</span>{% endif %}</td></tr>
+    {% else %}<tr><td colspan="5" class="text-center text-muted py-4">No hay entrenadores registrados.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endblock %}

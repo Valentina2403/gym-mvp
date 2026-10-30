@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block titulo %}Mi cuenta{% endblock %}
+{% block contenido %}
+<h1 class="h4 mb-4">Mi cuenta</h1>
+<div class="tarjeta p-4" style="max-width: 520px">
+  <p class="text-muted mb-4">Usuario: <strong>{{ current_user.usuario }}</strong></p>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="mb-3"><label class="form-label" for="actual">Contraseña actual</label>
+      <input class="form-control" type="password" id="actual" name="actual" required></div>
+    <div class="mb-3"><label class="form-label" for="nueva">Nueva contraseña</label>
+      <input class="form-control" type="password" id="nueva" name="nueva" minlength="8" required>
+      <div class="form-text">Mínimo 8 caracteres.</div></div>
+    <div class="mb-4"><label class="form-label" for="confirmacion">Confirmar nueva contraseña</label>
+      <input class="form-control" type="password" id="confirmacion" name="confirmacion" required></div>
+    <button class="btn btn-primary" type="submit">Cambiar contraseña</button>
+  </form>
+</div>
+{% endblock %}
