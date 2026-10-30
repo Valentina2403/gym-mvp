@@ -1,0 +1,20 @@
+{% if recientes %}
+<div class="table-responsive">
+<table class="table table-sm align-middle mb-0">
+  <thead><tr><th>Hora</th><th>Socio</th><th>Resultado</th><th class="d-none d-md-table-cell">Validado por</th></tr></thead>
+  <tbody>
+  {% for r in recientes %}
+  <tr>
+    <td class="text-nowrap">{{ r.fecha_hora.strftime('%d/%m %H:%M') }}</td>
+    <td>{{ r.socio.nombre_completo() }}</td>
+    <td>{% if r.resultado.value == 'PERMITIDO' %}<span class="badge text-bg-success">Permitido</span>
+        {% else %}<span class="badge text-bg-danger">Denegado</span> <span class="small text-muted">{{ r.motivo }}</span>{% endif %}</td>
+    <td class="d-none d-md-table-cell text-muted">{{ r.validado_por.nombre_completo() }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="text-muted mb-0">Aún no hay ingresos registrados.</p>
+{% endif %}
