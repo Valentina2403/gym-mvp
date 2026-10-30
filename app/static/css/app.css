@@ -1,0 +1,43 @@
+:root {
+  --gc-primario: #0f766e;
+  --gc-primario-oscuro: #115e59;
+  --gc-fondo: #f4f6f8;
+  --gc-borde: #e3e7eb;
+}
+
+body { background: var(--gc-fondo); }
+
+.btn-primary { --bs-btn-bg: var(--gc-primario); --bs-btn-border-color: var(--gc-primario);
+  --bs-btn-hover-bg: var(--gc-primario-oscuro); --bs-btn-hover-border-color: var(--gc-primario-oscuro);
+  --bs-btn-active-bg: var(--gc-primario-oscuro); }
+.text-primario { color: var(--gc-primario); }
+
+/* Barra lateral */
+.sidebar { width: 240px; min-height: 100vh; background: #102a2a; }
+.sidebar .marca { color: #fff; font-weight: 700; font-size: 1.15rem; letter-spacing: .3px; }
+.sidebar .nav-link { color: #b6c9c7; border-radius: .5rem; padding: .55rem .8rem; }
+.sidebar .nav-link:hover { color: #fff; background: rgba(255,255,255,.06); }
+.sidebar .nav-link.active { color: #fff; background: var(--gc-primario); }
+.sidebar .seccion { color: #6f8b88; font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; }
+
+.contenido { min-width: 0; }
+.tarjeta { background: #fff; border: 1px solid var(--gc-borde); border-radius: .75rem; }
+.kpi .valor { font-size: 2rem; font-weight: 700; line-height: 1; }
+.kpi .etiqueta { color: #6b7280; font-size: .85rem; }
+
+/* Validación de acceso: alertas grandes y legibles a distancia */
+.alerta-acceso { border-radius: 1rem; padding: 2rem; text-align: center; color: #fff; }
+.alerta-acceso .titulo { font-size: 2rem; font-weight: 800; }
+.alerta-acceso.success { background: #15803d; }
+.alerta-acceso.warning { background: #b45309; }
+.alerta-acceso.danger { background: #b91c1c; }
+.input-documento { font-size: 1.5rem; letter-spacing: .05em; }
+
+.login-fondo { min-height: 100vh; background: linear-gradient(135deg, #102a2a 0%, #0f766e 100%); }
+.login-caja { max-width: 400px; }
+
+.table > :not(caption) > * > * { padding: .65rem .75rem; }
+
+@media (max-width: 991.98px) {
+  .sidebar { width: 100%; min-height: auto; }
+}
