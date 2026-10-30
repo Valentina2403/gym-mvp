@@ -1,0 +1,593 @@
+@startuml casos_uso
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam nodesep 25
+skinparam ranksep 70
+left to right direction
+
+actor "Administrador" as ADM
+actor "Recepcionista" as REC
+actor "Entrenador" as ENT
+actor "Socio" as SOC
+
+REC <|-- ADM
+ENT <|-- ADM
+
+rectangle "Sistema de Gestión de Gimnasio (MVP)" {
+  usecase "CU-01 Iniciar sesión" as CU01
+  usecase "CU-02 Registrar socio" as CU02
+  usecase "CU-03 Validar acceso" as CU03
+  usecase "CU-05 Registrar\nmétricas físicas" as CU05
+  usecase "CU-06 Consultar\nhistorial de progreso" as CU06
+  usecase "CU-04 Asignar /\nrenovar membresía" as CU04
+  usecase "CU-07 Registrar\nentrenador" as CU07
+  usecase "CU-08 Generar\nreporte de morosos" as CU08
+
+  usecase "Verificar\ndocumento único" as INC1
+  usecase "Consultar estado\nde membresía" as INC2
+  usecase "Registrar ingreso" as EXT1
+  usecase "Calcular IMC" as INC4
+  usecase "Registrar\npago manual" as INC3
+}
+
+REC -- CU01
+REC -- CU02
+REC -- CU03
+ENT -- CU01
+ENT -- CU05
+SOC -- CU01
+SOC -- CU06
+ADM -- CU04
+ADM -- CU07
+ADM -- CU08
+
+CU02 ..> INC1 : <<include>>
+CU03 ..> INC2 : <<include>>
+EXT1 .up.> CU03 : <<extend>>\n[membresía vigente]
+CU05 ..> INC4 : <<include>>
+CU04 ..> INC3 : <<include>>
+@enduml
+
+@startuml act_registro_socio
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+title Diagrama de actividades · CU-02 Registrar socio (HU-01)
+|Recepcionista|
+start
+:Abrir formulario de registro;
+repeat
+  |Recepcionista|
+  :Ingresar nombres, documento,
+  correo y teléfono;
+  :Presionar "Guardar";
+  |Sistema|
+  :Validar campos obligatorios y formato;
+  if (¿Campos completos y válidos?) then (no)
+    :Señalar campos faltantes
+    o con formato inválido;
+  else (sí)
+    :Buscar socio por documento;
+    if (¿Documento ya registrado?) then (sí)
+      :Mostrar alerta
+      "Documento ya registrado";
+    else (no)
+      :Guardar socio;
+      :Crear cuenta con rol SOCIO
+      (contraseña cifrada con BCrypt);
+    endif
+  endif
+repeat while (¿Socio guardado?) is (no) not (sí)
+:Mostrar mensaje de éxito
+y actualizar listado general;
+|Recepcionista|
+:Confirmar alta al socio;
+stop
+@enduml
+
+@startuml act_validar_acceso
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+title Diagrama de actividades · CU-03 Validar acceso (HU-02)
+|Recepcionista|
+start
+:Digitar o escanear documento;
+:Presionar "Validar acceso";
+|Sistema|
+:Buscar socio por documento;
+if (¿Socio registrado?) then (no)
+  :Mostrar alerta roja
+  "Socio no registrado";
+  |Recepcionista|
+  :Orientar al visitante
+  hacia el registro;
+  stop
+else (sí)
+endif
+|Sistema|
+:Consultar membresía vigente del socio;
+if (¿Membresía vigente\n(hoy <= fechaFin)?) then (sí)
+  :Registrar ingreso PERMITIDO;
+  :Mostrar alerta verde
+  "Acceso permitido" + nombre;
+  |Recepcionista|
+  :Permitir el ingreso;
+else (no)
+  |Sistema|
+  :Registrar intento DENEGADO;
+  :Mostrar alerta roja "Acceso denegado:
+  membresía vencida";
+  |Recepcionista|
+  :Remitir a administración
+  para renovar;
+endif
+stop
+@enduml
+
+@startuml act_renovar_membresia
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+title Diagrama de actividades · CU-04 Asignar / renovar membresía (HU-04)
+|Administrador|
+start
+:Buscar socio registrado;
+:Seleccionar "Renovar membresía";
+:Elegir plan (p. ej. mensual de 30 días);
+:Registrar pago recibido
+(monto y método);
+:Confirmar operación;
+|Sistema|
+if (¿Plan y datos de pago válidos?) then (no)
+  :Mostrar error de validación;
+  |Administrador|
+  stop
+else (sí)
+endif
+|Sistema|
+:Crear nueva membresía
+inicio = hoy
+fin = hoy + duración del plan;
+fork
+  :Registrar pago asociado
+  a la membresía;
+fork again
+  :Marcar membresía anterior
+  como RENOVADA (si existe);
+end fork
+:Registrar transacción
+en el historial del socio;
+:Mostrar nueva fecha de vencimiento;
+stop
+@enduml
+
+@startuml act_metricas_imc
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+title Diagrama de actividades · CU-05 Registrar métricas y calcular IMC (HU-03)
+|Entrenador|
+start
+:Buscar y seleccionar socio;
+:Abrir sección "Control físico";
+repeat
+  |Entrenador|
+  :Ingresar peso (kg), altura (m)
+  y % de grasa (opcional);
+  :Presionar "Guardar";
+  |Sistema|
+  :Validar valores numéricos > 0;
+repeat while (¿Datos válidos?) is (no) not (sí)
+:Calcular IMC = peso / altura²
+(redondeo a 2 decimales);
+:Clasificar IMC según rangos OMS;
+:Guardar medición con la fecha actual;
+:Mostrar IMC y clasificación;
+|Entrenador|
+:Revisar resultado con el socio;
+stop
+@enduml
+
+@startuml estado_membresia
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam nodesep 80
+skinparam ranksep 55
+title Diagrama de estados · entidad Membresía
+
+state Activa : entry / calcular fechaFin\ndo / permitir ingreso
+state "Por vencer" as PorVencer : entry / avisar en recepción\ndo / permitir ingreso
+state Vencida : entry / incluir en reporte de morosos\ndo / denegar ingreso
+state Renovada
+state Cancelada
+
+[*] --> Activa : asignar(plan)\n/ registrarPago()
+Activa --> PorVencer : [quedan 7 días o menos]
+PorVencer --> Vencida : [hoy > fechaFin]
+Vencida --> Renovada : renovar(plan)
+PorVencer --> Renovada : renovar(plan)
+Activa --> Cancelada : cancelar()
+Renovada --> [*]
+Cancelada --> [*]
+@enduml
+
+@startuml clases
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam classAttributeIconSize 0
+skinparam nodesep 60
+skinparam ranksep 80
+hide circle
+hide empty members
+title Diagrama de clases · modelo de dominio
+
+abstract class Persona {
+  - idPersona : Long
+  - nombres : String
+  - apellidos : String
+  - documento : String {unique}
+  - correo : String
+  - telefono : String
+  + nombreCompleto() : String
+}
+class Cuenta {
+  - idCuenta : Long
+  - usuario : String {unique}
+  - hashContrasena : String
+  - rol : Rol
+  - activa : Boolean
+  + autenticar(contrasena : String) : Boolean
+  + cambiarContrasena(nueva : String) : void
+}
+class Socio {
+  - fechaRegistro : LocalDate
+  + membresiaVigente(fecha : LocalDate) : Membresia
+  + estaAlDia(fecha : LocalDate) : Boolean
+}
+class Empleado {
+  - fechaIngreso : LocalDate
+}
+class Entrenador {
+  - activo : Boolean
+  + asignarEspecialidad(e : Especialidad) : void
+}
+class Especialidad {
+  - idEspecialidad : Long
+  - nombre : String {unique}
+}
+class Membresia {
+  - idMembresia : Long
+  - fechaInicio : LocalDate
+  - fechaFin : LocalDate
+  - estado : EstadoMembresia
+  + estaVigente(fecha : LocalDate) : Boolean
+  + diasRestantes(fecha : LocalDate) : Integer
+  + actualizarEstado(fecha : LocalDate) : void
+  + asociarPago(p : Pago) : void
+  + marcarRenovada() : void
+  + cancelar() : void
+}
+class Plan {
+  - idPlan : Long
+  - nombre : String
+  - duracionDias : Integer
+  - precio : BigDecimal
+  + calcularFechaFin(inicio : LocalDate) : LocalDate
+}
+class Pago {
+  - idPago : Long
+  - fecha : LocalDateTime
+  - monto : BigDecimal
+  - metodo : MetodoPago
+}
+class RegistroAcceso {
+  - idRegistro : Long
+  - fechaHora : LocalDateTime
+  - resultado : ResultadoAcceso
+  - motivo : String
+}
+class MedicionFisica {
+  - idMedicion : Long
+  - fecha : LocalDate
+  - pesoKg : Double
+  - alturaM : Double
+  - porcentajeGrasa : Double [0..1]
+  - imc : Double
+  + calcularIMC() : Double
+  + clasificacionIMC() : String
+}
+enum Rol <<enumeration>> {
+  ADMINISTRADOR
+  RECEPCIONISTA
+  ENTRENADOR
+  SOCIO
+}
+enum EstadoMembresia <<enumeration>> {
+  ACTIVA
+  POR_VENCER
+  VENCIDA
+  RENOVADA
+  CANCELADA
+}
+enum ResultadoAcceso <<enumeration>> {
+  PERMITIDO
+  DENEGADO
+}
+enum MetodoPago <<enumeration>> {
+  EFECTIVO
+  TRANSFERENCIA
+  DATAFONO
+}
+
+Cuenta "0..1" -right- "1" Persona : accede con >
+Persona <|-- Socio
+Persona <|-- Empleado
+Empleado <|-- Entrenador
+Entrenador "0..*" -right- "1..*" Especialidad : tiene >
+
+Socio "1" *-- "0..*" Membresia : posee >
+Socio "1" *-- "0..*" MedicionFisica : tiene >
+Socio "1" *-- "0..*" RegistroAcceso : genera >
+Plan "1" <-right- "0..*" Membresia : según <
+Membresia "1" *-- "1" Pago : se paga con >
+
+Empleado "1" <-- "0..*" RegistroAcceso : validadoPor <
+Empleado "1" <-- "0..*" MedicionFisica : registradaPor <
+Empleado "1" <-- "0..*" Pago : registradoPor <
+
+Pago -[hidden]down- Rol
+Rol -[hidden]right- EstadoMembresia
+EstadoMembresia -[hidden]right- ResultadoAcceso
+ResultadoAcceso -[hidden]right- MetodoPago
+@enduml
+
+@startuml arquitectura
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam nodesep 40
+skinparam ranksep 45
+title Arquitectura de alto nivel · aplicación web en capas (MVC)
+top to bottom direction
+
+node "Cliente: PC o tableta de recepción, celular del socio" as CLI {
+  component "Navegador web (interfaz responsiva)" as BR
+}
+
+node "Servidor de aplicación (Java 17 + Spring Boot 3)" as APP {
+  rectangle "Seguridad · Spring Security\nsesión · permisos por rol · contraseñas con BCrypt" as SEC
+  rectangle "Controlador (C) · Spring MVC\nAuth · Socio · Acceso · Membresía · Métrica · Reporte" as CTL
+  rectangle "Vista (V) · Thymeleaf + Bootstrap 5\npantallas HTML responsivas" as VIS
+  rectangle "Servicios (M) · reglas de negocio\nvigencia · renovación · cálculo de IMC" as SRV
+  rectangle "Persistencia (M) · Spring Data JPA\nentidades de dominio y repositorios" as REP
+}
+
+database "Base de datos MySQL 8" as DB
+
+BR -down-> SEC : 1. petición HTTPS
+SEC -down-> CTL : 2. usuario autorizado
+CTL -down-> SRV : 3. ejecuta el caso de uso
+SRV -down-> REP : 4. lee / guarda
+REP -down-> DB : 5. SQL (JDBC)
+CTL -right-> VIS : 6. datos para la pantalla
+VIS -up-> BR : 7. HTML de respuesta
+@enduml
+
+@startuml sec_login
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam sequenceMessageAlign center
+title Secuencia · CU-01 Iniciar sesión (RF-06, RNF-03)
+hide footbox
+autonumber
+actor "Usuario" as U
+boundary ":VistaLogin" as V
+control ":AuthController" as C
+control ":AuthService" as S
+participant ":CuentaRepository" as R
+participant ":BCryptPasswordEncoder" as E
+
+U -> V : ingresar usuario y contraseña
+V -> C : POST /login(usuario, contrasena)
+activate C
+C -> S : autenticar(usuario, contrasena)
+activate S
+S -> R : findByUsuario(usuario)
+R --> S : cuenta : Optional<Cuenta>
+alt cuenta existe y está activa
+  S -> E : matches(contrasena, cuenta.hashContrasena)
+  E --> S : coincide : Boolean
+  alt coincide
+    S --> C : sesión con rol
+    C --> V : redirigir al panel del rol
+  else no coincide
+    S --> C : CredencialesInvalidasException
+    C --> V : "Usuario o contraseña incorrectos"
+  end
+else no existe o inactiva
+  S --> C : CredencialesInvalidasException
+  C --> V : "Usuario o contraseña incorrectos"
+end
+deactivate S
+deactivate C
+@enduml
+
+@startuml sec_validar_acceso
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam sequenceMessageAlign center
+title Secuencia · CU-03 Validar acceso (HU-02, RF-03, RNF-01)
+hide footbox
+autonumber
+actor "Recepcionista" as R
+boundary ":VistaRecepcion" as V
+control ":AccesoController" as C
+control ":AccesoService" as S
+participant ":SocioRepository" as SR
+participant ":MembresiaRepository" as MR
+participant "m : Membresia" as M
+participant ":RegistroAccesoRepository" as AR
+
+R -> V : digitar documento y clic "Validar acceso"
+V -> C : POST /acceso/validar(doc)
+activate C
+C -> S : validarAcceso(doc)
+activate S
+S -> SR : findByDocumento(doc)
+SR --> S : socio : Optional<Socio>
+alt socio no registrado
+  S --> C : Resultado(NO_REGISTRADO)
+  C --> V : alerta roja "Socio no registrado"
+else socio registrado
+  S -> MR : findVigenteBySocio(socio.id)
+  MR --> S : m
+  S -> M : estaVigente(hoy)
+  M --> S : vigente : Boolean
+  alt vigente
+    S -> AR : save(RegistroAcceso(socio, PERMITIDO))
+    S --> C : Resultado(PERMITIDO, nombre)
+    C --> V : alerta verde "Acceso permitido" + nombre
+  else vencida o sin membresía
+    S -> AR : save(RegistroAcceso(socio, DENEGADO))
+    S --> C : Resultado(DENEGADO, "Membresía vencida")
+    C --> V : alerta roja "Acceso denegado: membresía vencida"
+  end
+end
+deactivate S
+deactivate C
+note over V, AR : RNF-01: el ciclo completo debe responder en menos de 2 segundos
+@enduml
+
+@startuml sec_renovar_membresia
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam sequenceMessageAlign center
+title Secuencia · CU-04 Asignar / renovar membresía (HU-04, RF-02)
+hide footbox
+autonumber
+actor "Administrador" as A
+boundary ":VistaMembresias" as V
+control ":MembresiaController" as C
+control ":MembresiaService" as S
+participant ":SocioRepository" as SR
+participant ":PlanRepository" as PR
+participant ":MembresiaRepository" as MR
+participant "anterior : Membresia" as ANT
+
+A -> V : elegir plan, registrar pago y confirmar
+V -> C : POST /membresias/renovar(idSocio, idPlan, pago)
+activate C
+C -> S : renovar(idSocio, idPlan, pago, admin)
+activate S
+note right of S : @Transactional
+S -> SR : findById(idSocio)
+SR --> S : socio
+S -> PR : findById(idPlan)
+PR --> S : plan
+S -> MR : findVigenteBySocio(idSocio)
+MR --> S : anterior : Optional<Membresia>
+opt existe membresía anterior
+  S -> ANT : marcarRenovada()
+end
+create participant "nueva : Membresia" as NUE
+S -> NUE : <<create>> (socio, plan, hoy, plan.calcularFechaFin(hoy))
+create participant "p : Pago" as PAG
+S -> PAG : <<create>> (monto, metodo, admin)
+S -> NUE : asociarPago(p)
+S -> MR : saveAll(anterior, nueva)
+MR --> S : nueva
+S --> C : nueva.fechaFin
+deactivate S
+C --> V : "Membresía vigente hasta <fechaFin>"
+deactivate C
+@enduml
+
+@startuml sec_registrar_metricas
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam sequenceMessageAlign center
+title Secuencia · CU-05 Registrar métricas y calcular IMC (HU-03, RF-04)
+hide footbox
+autonumber
+actor "Entrenador" as E
+boundary ":VistaMetricas" as V
+control ":MetricaController" as C
+control ":MetricaService" as S
+participant ":SocioRepository" as SR
+participant ":MedicionRepository" as MR
+
+E -> V : ingresar peso, altura y % grasa
+V -> C : POST /metricas(idSocio, peso, altura, grasa)
+activate C
+C -> C : validar(peso > 0, altura > 0)
+alt datos válidos
+  C -> S : registrarMedicion(idSocio, peso, altura, grasa, entrenador)
+  activate S
+  S -> SR : findById(idSocio)
+  SR --> S : socio
+  create participant "med : MedicionFisica" as MED
+  S -> MED : <<create>> (socio, hoy, peso, altura, grasa)
+  S -> MED : calcularIMC()
+  activate MED
+  MED -> MED : imc = peso / altura²
+  MED --> S : imc (p. ej. 75 / 1,75² = 24,49)
+  deactivate MED
+  S -> MR : save(med)
+  S --> C : med
+  deactivate S
+  C --> V : mostrar IMC y clasificación
+else datos inválidos
+  C --> V : mensaje de error por campo
+end
+deactivate C
+@enduml
+
+@startuml colab_validar_acceso
+!theme plain
+skinparam dpi 160
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam nodesep 60
+skinparam ranksep 70
+title Colaboración · CU-03 Validar acceso (acceso permitido)
+top to bottom direction
+
+actor "Recepcionista" as R
+rectangle ":VistaRecepcion" as V
+rectangle ":AccesoController" as C
+rectangle ":AccesoService" as S
+rectangle ":SocioRepository" as SR
+rectangle ":MembresiaRepository" as MR
+rectangle "m : Membresia" as M
+rectangle ":RegistroAccesoRepository" as AR
+
+R -down- V : "1: validarAcceso(doc) ↓"
+V -down- C : "1.1: POST /acceso/validar(doc) ↓\n1.2: mostrarAlerta(VERDE, nombre) ↑"
+C -down- S : "1.1.1: validarAcceso(doc) ↓"
+S -down- SR : "1.1.1.1: findByDocumento(doc) ↓"
+S -down- MR : "1.1.1.2: findVigenteBySocio(id) ↓"
+S -down- M : "1.1.1.3: estaVigente(hoy) ↓"
+S -down- AR : "1.1.1.4: [vigente] save(registro) ↓"
+@enduml

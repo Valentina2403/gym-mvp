@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block titulo %}No encontrado{% endblock %}
+{% block contenido %}
+<div class="text-center py-5">
+  <i class="bi bi-question-circle fs-1 text-muted"></i>
+  <h1 class="h4 mt-3">Página no encontrada</h1>
+  <a class="btn btn-primary" href="{{ url_for('main.inicio') }}">Volver al inicio</a>
+</div>
+{% endblock %}
+{% block publico %}<p class="p-4">Página no encontrada.{% if existe('auth.login') %} <a href="{{ url_for('auth.login') }}">Ir al inicio de sesión</a>{% endif %}</p>{% endblock %}
