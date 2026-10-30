@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_macros.html" import campo with context %}
+{% block titulo %}Registrar socio{% endblock %}
+{% block contenido %}
+<h1 class="h4 mb-4">Registrar socio</h1>
+<div class="tarjeta p-4" style="max-width: 720px">
+  <form method="post" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="row">
+      <div class="col-md-6">{{ campo('nombres', 'Nombres', datos, errores) }}</div>
+      <div class="col-md-6">{{ campo('apellidos', 'Apellidos', datos, errores) }}</div>
+      <div class="col-md-6">{{ campo('documento', 'Documento', datos, errores, ayuda='Solo números; debe ser único.', atributos='inputmode=numeric') }}</div>
+      <div class="col-md-6">{{ campo('telefono', 'Teléfono', datos, errores, tipo='tel') }}</div>
+      <div class="col-12">{{ campo('correo', 'Correo', datos, errores, tipo='email', ayuda='Será el usuario para que el socio consulte su progreso.') }}</div>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary" type="submit"><i class="bi bi-save me-2"></i>Guardar</button>
+      <a class="btn btn-outline-secondary" href="{{ url_for('socios.listar') }}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
