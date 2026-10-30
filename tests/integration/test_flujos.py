@@ -181,3 +181,12 @@ def test_PI10_registro_de_entrenador_con_especialidades(como, datos):
     assert entrenador.activo and len(entrenador.especialidades) == 2
     assert entrenador.cuenta.rol == Rol.ENTRENADOR
 
+
+# Complemento de RF-06: el administrador restablece la contraseña de un socio
+def test_PI11_admin_restablece_contrasena_de_socio(como, datos, client):
+    socio = datos["activo"]
+    socio.cuenta.cambiar_contrasena("NuevaClave2026")
+    como("admin").post(f"/socios/{socio.id_persona}/restablecer-contrasena")
+    assert como("recepcion").post(f"/socios/{socio.id_persona}/restablecer-contrasena").status_code == 403
+    client.get("/logout")
+    assert iniciar_sesion(client, "activo@test.com", "1000000001").status_code == 302
