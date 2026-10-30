@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block titulo %}Reportes{% endblock %}
+{% block contenido %}
+<h1 class="h4 mb-4">Reportes</h1>
+<form class="tarjeta p-3 mb-4 d-flex flex-wrap gap-2 align-items-end" method="get">
+  <div>
+    <label class="form-label" for="filtro">Filtro</label>
+    <select class="form-select" id="filtro" name="filtro">
+      <option value="morosos" {{ 'selected' if filtro == 'morosos' }}>Socios con membresía vencida</option>
+      <option value="activos" {{ 'selected' if filtro == 'activos' }}>Socios con membresía activa</option>
+    </select>
+  </div>
+  <button class="btn btn-primary" type="submit" name="generar" value="1"><i class="bi bi-file-earmark-text me-2"></i>Generar reporte</button>
+  {% if generado and filas %}
+  <a class="btn btn-outline-secondary" href="{{ url_for('reportes.exportar', filtro=filtro) }}"><i class="bi bi-download me-2"></i>Exportar CSV</a>
+  {% endif %}
+</form>
+{% if generado %}
+  {% if filas %}
+  <div class="tarjeta">
+    <div class="p-3 border-bottom d-flex justify-content-between">
+      <strong>{{ 'Socios morosos' if filtro == 'morosos' else 'Socios activos' }}</strong>
+      <span class="text-muted">{{ filas|length }} registro(s) · {{ hoy|fecha }}</span>
+    </div>
+    <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Nombre</th><th>Teléfono</th><th>{{ 'Venció el' if filtro == 'morosos' else 'Vence el' }}</th>
+        <th>{{ 'Días vencida' if filtro == 'morosos' else 'Plan' }}</th></tr></thead>
+      <tbody>
+      {% for f in filas %}
+        <tr><td><a href="{{ url_for('socios.detalle', id_socio=f.socio.id_persona) }}">{{ f.socio.nombre_completo() }}</a></td>
+            <td>{{ f.telefono }}</td><td>{{ f.fecha_fin|fecha }}</td>
+            <td>{{ f.dias_vencida if filtro == 'morosos' else f.plan }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="alert alert-info" id="sin-registros">No se encontraron registros bajo ese criterio.</div>
+  {% endif %}
+{% endif %}
+{% endblock %}

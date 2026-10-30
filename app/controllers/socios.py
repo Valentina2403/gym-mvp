@@ -3,6 +3,7 @@ from datetime import date
 
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 
+from app.extensions import db
 from app.models import Rol
 from app.repositories import SocioRepository
 from app.services import SocioService
@@ -51,3 +52,12 @@ def detalle(id_socio: int):
     return render_template("socios/detalle.html", socio=socio, membresia=membresia, accesos=accesos,
                            hoy=date.today())
 
+
+@bp.route("/<int:id_socio>/restablecer-contrasena", methods=["POST"])
+@rol_requerido(Rol.ADMINISTRADOR)
+def restablecer_contrasena(id_socio: int):
+    socio = SocioRepository.find_by_id(id_socio) or abort(404)
+    socio.cuenta.establecer_contrasena(socio.documento)
+    db.session.commit()
+    flash(f"Contraseña de {socio.nombre_completo()} restablecida: vuelve a ser su número de documento.", "info")
+    return redirect(url_for("socios.detalle", id_socio=id_socio))
