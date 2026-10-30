@@ -7,4 +7,7 @@ from app.services.metrica_service import MetricaService
 from app.services.reporte_service import ReporteService
 from app.services.socio_service import SocioService
 
-__all__ = ["AccesoService", "ResultadoValidacion", "AuthService", "EntrenadorService", "MembresiaService", "MetricaService", "ReporteService", "SocioService"]
+__all__ = [
+    "AccesoService", "ResultadoValidacion", "AuthService", "EntrenadorService",
+    "MembresiaService", "MetricaService", "ReporteService", "SocioService",
+]
