@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "_macros.html" import estado with context %}
+{% block titulo %}Mi progreso{% endblock %}
+{% block contenido %}
+<h1 class="h4 mb-1">Mi progreso</h1>
+<p class="text-muted mb-4">Hola, {{ socio.nombres }}. Aquí ves tus mediciones registradas por el entrenador.</p>
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="tarjeta p-3 h-100">
+      <div class="text-muted small">Membresía</div>
+      <div class="mt-1">{{ estado(membresia) }}</div>
+      {% if membresia %}<div class="small text-muted mt-1">{{ membresia.plan.nombre }} · vence {{ membresia.fecha_fin|fecha }}</div>{% endif %}
+    </div>
+  </div>
+  {% if historial %}
+  {% set ultima = historial[-1] %}
+  <div class="col-6 col-md-4"><div class="tarjeta kpi p-3 h-100"><div class="etiqueta">Peso actual</div><div class="valor mt-1">{{ '%.1f'|format(ultima.peso_kg) }} <span class="fs-6">kg</span></div>
+    {% if historial|length > 1 %}<div class="small {{ 'text-success' if ultima.peso_kg < historial[0].peso_kg else 'text-muted' }}">{{ '%+.1f'|format(ultima.peso_kg - historial[0].peso_kg) }} kg desde la primera medición</div>{% endif %}</div></div>
+  <div class="col-6 col-md-4"><div class="tarjeta kpi p-3 h-100"><div class="etiqueta">IMC actual</div><div class="valor mt-1">{{ '%.2f'|format(ultima.imc) }}</div><div class="small text-muted">{{ ultima.clasificacion_imc() }}</div></div></div>
+  {% endif %}
+</div>
+{% if historial|length > 1 %}
+<div class="tarjeta p-3 mb-4"><h2 class="h6">Evolución del peso</h2><canvas id="grafica" height="90"></canvas></div>
+{% endif %}
+<div class="tarjeta p-3">
+  <h2 class="h6">Historial de mediciones</h2>
+  {% include "metricas/_historial.html" %}
+</div>
+{% endblock %}
+{% block scripts %}
+{% if historial|length > 1 %}
+<script src="{{ url_for('static', filename='vendor/chartjs/chart.umd.js') }}"></script>
+<script>
+  new Chart(document.getElementById('grafica'), {
+    type: 'line',
+    data: {
+      labels: {{ historial|map(attribute='fecha')|map('string')|list|tojson }},
+      datasets: [{ label: 'Peso (kg)', data: {{ historial|map(attribute='peso_kg')|list|tojson }},
+                   borderColor: '#0f766e', backgroundColor: 'rgba(15,118,110,.12)', fill: true, tension: .3 }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { title: { display: true, text: 'kg' } } } }
+  });
+</script>
+{% endif %}
+{% endblock %}
