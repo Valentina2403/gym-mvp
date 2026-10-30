@@ -1,0 +1,16 @@
+{% if historial %}
+<div class="table-responsive">
+<table class="table table-sm align-middle mb-0">
+  <thead><tr><th>Fecha</th><th>Peso (kg)</th><th>Altura (m)</th><th>% grasa</th><th>IMC</th><th>Clasificación</th></tr></thead>
+  <tbody>
+  {% for m in historial|reverse %}
+  <tr><td>{{ m.fecha|fecha }}</td><td>{{ '%.1f'|format(m.peso_kg) }}</td><td>{{ '%.2f'|format(m.altura_m) }}</td>
+      <td>{{ '%.1f'|format(m.porcentaje_grasa) if m.porcentaje_grasa else '—' }}</td>
+      <td class="fw-semibold">{{ '%.2f'|format(m.imc) }}</td><td>{{ m.clasificacion_imc() }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="text-muted mb-0" id="sin-mediciones">{{ "Aún no tienes evaluaciones físicas registradas." if current_user.rol == Rol.SOCIO else "El socio aún no tiene evaluaciones físicas registradas." }}</p>
+{% endif %}
