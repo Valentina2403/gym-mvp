@@ -82,7 +82,8 @@ usa la IP del equipo, por ejemplo `http://192.168.1.20:5000`.
 
 | Rol | Correo | Contraseña |
 | --- | --- | --- |
-| Administrador | admin@gimnasio.com | Admin2026* |
+| Administradora (Valentina Marín) | valentina@gimnasio.com | Admin2026* |
+| Administradora (Sofía Carvajal) | sofia@gimnasio.com | Admin2026* |
 | Recepcionista | recepcion@gimnasio.com | Recepcion2026* |
 | Entrenador | entrenador@gimnasio.com | Entrena2026* |
 | Socio | andres.ramirez@correo.com | 1037000111 |

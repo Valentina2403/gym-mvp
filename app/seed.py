@@ -10,7 +10,8 @@ from app.models import (
 
 USUARIOS_DEMO = [
     # (nombres, apellidos, documento, correo, rol, contraseña)
-    ("Laura", "Gómez", "1001001001", "admin@gimnasio.com", Rol.ADMINISTRADOR, "Admin2026*"),
+    ("Valentina", "Marín Tuberquia", "1001001001", "valentina@gimnasio.com", Rol.ADMINISTRADOR, "Admin2026*"),
+    ("Sofía", "Carvajal Rivera", "1001001004", "sofia@gimnasio.com", Rol.ADMINISTRADOR, "Admin2026*"),
     ("Camilo", "Restrepo", "1002002002", "recepcion@gimnasio.com", Rol.RECEPCIONISTA, "Recepcion2026*"),
 ]
 
@@ -48,7 +49,7 @@ def cargar_datos_demo(hoy: date | None = None) -> None:
     especialidades = {n: Especialidad(nombre=n) for n in ("Musculación", "Crossfit", "Funcional", "Yoga", "Cardio")}
     db.session.add_all(especialidades.values())
 
-    admin, recepcion = (_empleado(*u) for u in USUARIOS_DEMO)
+    admin, _admin2, recepcion = (_empleado(*u) for u in USUARIOS_DEMO)
     entrenador = _empleado("Felipe", "Arango", "1003003003", "entrenador@gimnasio.com", Rol.ENTRENADOR,
                            "Entrena2026*", clase=Entrenador, activo=True)
     entrenador.asignar_especialidad(especialidades["Musculación"])
