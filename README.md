@@ -37,7 +37,8 @@ python run.py                     # abre http://127.0.0.1:5000
 
 | Rol | Correo | Contraseña |
 | --- | --- | --- |
-| Administrador | admin@gimnasio.com | Admin2026* |
+| Administradora (Valentina Marín) | valentina@gimnasio.com | Admin2026* |
+| Administradora (Sofía Carvajal) | sofia@gimnasio.com | Admin2026* |
 | Recepcionista | recepcion@gimnasio.com | Recepcion2026* |
 | Entrenador | entrenador@gimnasio.com | Entrena2026* |
 | Socio | andres.ramirez@correo.com | 1037000111 |
@@ -78,3 +79,8 @@ docs/                Manuales, diagramas UML y evidencias
 Mensajes de commit con [Conventional Commits](https://www.conventionalcommits.org/es/): `feat(HU-02): ...`, `fix(HU-03): ...`.
 
 Más detalle en el [manual técnico](docs/MANUAL_TECNICO.md) y el [manual de usuario](docs/MANUAL_USUARIO.md).
+
+## Equipo
+
+- Valentina Marín Tuberquia
+- Sofía Carvajal Rivera
